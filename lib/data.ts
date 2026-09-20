@@ -1,15 +1,55 @@
-export type ProjectFilter = "all" | "mern" | "dotnet" | "vue-quasar" | "realtime";
+export type ProjectType = "websites" | "applications";
+
+export type TechId =
+  | "nextjs"
+  | "nestjs"
+  | "react"
+  | "angular"
+  | "dotnet"
+  | "tailwind"
+  | "typescript"
+  | "javascript"
+  | "html"
+  | "css"
+  | "scss"
+  | "framer"
+  | "quasar"
+  | "postgres"
+  | "mysql"
+  | "mssql"
+  | "plsql"
+  | "csharp"
+  | "cpp"
+  | "node";
+
+export type WebsiteStacks = {
+  backend: TechId[];
+  websiteSpa: TechId[];
+  cmsSpa: TechId[];
+};
+
+export type ApplicationStacks = {
+  frontendSpa: TechId[];
+  backend: TechId[];
+};
 
 export type Project = {
   id: string;
+  slug: string;
   title: string;
   subtitle: string;
   summary: string;
-  filters: Exclude<ProjectFilter, "all">[];
+  role: string;
+  type: ProjectType;
+  order: number;
   featured: boolean;
+  techTags: TechId[];
+  imageDir: string;
+  previewImages: string[];
   backend: string[];
   uiState: string[];
   dataFlow: string[];
+  stacks: WebsiteStacks | ApplicationStacks;
 };
 
 export const profile = {
@@ -18,21 +58,21 @@ export const profile = {
   headline: "Full-Stack System Engineer & Software Architect",
   location: "Dhaka, Bangladesh",
   email: "fardin1.codezzi@gmail.com",
-  phone: "+8801770366022",
   linkedin: "https://www.linkedin.com/in/fardin-abu-ubaid-29447b42b/",
   github: "https://github.com/FardinCodezzi1",
   remoteAvailable: true,
   photo: "/assets/FARDIN ABU UBAID.png",
   resumePath: "/assets/resume.pdf",
+  worldMap: "/assets/WorldMap/world.svg",
   summary:
     "Strategic Full-Stack System Engineer specializing in software architecture, end-to-end system design, and AI-integrated web applications.",
 } as const;
 
 export const heroPhrases = [
-  "I build real-time systems.",
-  "I architect UI component trees.",
-  "I integrate AI into production workflows.",
-  "I ship full-stack systems end to end.",
+  "real-time systems",
+  "UI component trees",
+  "AI production workflows",
+  "full-stack systems",
 ] as const;
 
 export const impactStats = [
@@ -42,154 +82,297 @@ export const impactStats = [
   { label: "Real-time systems at scale", value: "Live" },
 ] as const;
 
-export const projectFilters: { id: ProjectFilter; label: string }[] = [
+export const projectTypeTabs: { id: ProjectType | "all"; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "mern", label: "MERN" },
-  { id: "dotnet", label: ".NET" },
-  { id: "vue-quasar", label: "Vue / Quasar" },
-  { id: "realtime", label: "Real-time" },
+  { id: "websites", label: "Websites" },
+  { id: "applications", label: "Applications" },
 ];
+
+function imgs(type: "Websites" | "Applications", folder: string) {
+  const dir = `/assets/projects/${type}/${folder}`;
+  return {
+    imageDir: dir,
+    previewImages: [`${dir}/1.png`, `${dir}/2.png`, `${dir}/3.png`],
+  };
+}
 
 export const projects: Project[] = [
   {
-    id: "skychat-skysms",
-    title: "SkyChat & SkySMS",
-    subtitle: "Real-time messaging & queue orchestration",
+    id: "codezzi",
+    slug: "Codezzi",
+    title: "Codezzi",
+    subtitle: "Company website",
     summary:
-      "Real-time message handling and queue orchestration designed for heavy concurrent load across chat and SMS delivery paths.",
-    filters: ["mern", "realtime"],
+      "Official Codezzi corporate website — Next.js + NestJS. Designer, UI owner, and one of the frontend developers.",
+    role: "Designer / UI · Frontend",
+    type: "websites",
+    order: 1,
     featured: true,
+    techTags: ["nextjs", "nestjs", "react", "tailwind"],
+    ...imgs("Websites", "Codezzi"),
     backend: [
-      "WebSocket-backed real-time message handling",
-      "Queue orchestration for high-concurrency delivery",
-      "REST API boundaries for messaging services",
+      "NestJS service layer for content and site APIs",
+      "REST boundaries for marketing and CMS-driven pages",
     ],
     uiState: [
-      "Live conversation and delivery state models",
-      "Component trees for chat/SMS operator surfaces",
-      "Responsive UI architecture for concurrent session views",
+      "Custom dark-themed layout architecture",
+      "Design system and component trees owned end-to-end",
+      "Bespoke UI motion and visual language",
     ],
     dataFlow: [
-      "Client events → real-time channel → queue workers",
-      "Persisted message state synchronized across sessions",
-      "Status feedback loop from queue outcomes to UI",
+      "CMS / Nest APIs → Next.js surfaces",
+      "Shared design tokens across marketing pages",
     ],
+    stacks: {
+      backend: ["nestjs", "node"],
+      websiteSpa: ["nextjs", "react", "typescript", "tailwind"],
+      cmsSpa: ["nextjs", "react"],
+    },
+  },
+  {
+    id: "pbf",
+    slug: "PrimeBankFoundation(PBF)",
+    title: "Prime Bank Foundation",
+    subtitle: "Official foundation website",
+    summary:
+      "Official Prime Bank Foundation website with CMS and backend — NestJS + Next.js.",
+    role: "Full-stack architecture",
+    type: "websites",
+    order: 2,
+    featured: false,
+    techTags: ["nextjs", "nestjs"],
+    ...imgs("Websites", "PrimeBankFoundation(PBF)"),
+    backend: [
+      "NestJS backend for content and domain APIs",
+      "CMS-backed multi-tier architecture",
+    ],
+    uiState: [
+      "Next.js public website SPA",
+      "CMS SPA for content editors",
+      "Shared design-token UI layers",
+    ],
+    dataFlow: [
+      "CMS edits → Nest APIs → Next.js website",
+      "Shared models across admin and public tiers",
+    ],
+    stacks: {
+      backend: ["nestjs", "node"],
+      websiteSpa: ["nextjs", "react", "typescript", "tailwind"],
+      cmsSpa: ["nextjs", "react", "typescript"],
+    },
+  },
+  {
+    id: "pbgs",
+    slug: "PrimeBankGrammerSchool(PBGS)",
+    title: "Prime Bank Grammar School",
+    subtitle: "School website",
+    summary:
+      "Prime Bank Grammar School website with CMS and backend — NestJS + Next.js. Project lead.",
+    role: "Lead",
+    type: "websites",
+    order: 3,
+    featured: false,
+    techTags: ["nextjs", "nestjs"],
+    ...imgs("Websites", "PrimeBankGrammerSchool(PBGS)"),
+    backend: [
+      "NestJS backend and content services",
+      "CMS + public web multi-tier delivery",
+    ],
+    uiState: [
+      "Led UI architecture for public site",
+      "CMS SPA for school content operations",
+    ],
+    dataFlow: [
+      "CMS → Nest → Next.js school website",
+      "Governed component system across pages",
+    ],
+    stacks: {
+      backend: ["nestjs", "node"],
+      websiteSpa: ["nextjs", "react", "typescript", "tailwind"],
+      cmsSpa: ["nextjs", "react"],
+    },
+  },
+  {
+    id: "pcnd",
+    slug: "PrimeCollegeOfNursingDhaka(PCND)",
+    title: "Prime College of Nursing, Dhaka",
+    subtitle: "Nursing college website",
+    summary:
+      "Prime College of Nursing Dhaka website with CMS and backend — NestJS + Next.js. Shadow lead.",
+    role: "Shadow lead",
+    type: "websites",
+    order: 4,
+    featured: false,
+    techTags: ["nextjs", "nestjs"],
+    ...imgs("Websites", "PrimeCollegeOfNursingDhaka(PCND)"),
+    backend: [
+      "NestJS APIs for institutional content",
+      "CMS-backed publishing pipeline",
+    ],
+    uiState: [
+      "Next.js public website architecture",
+      "CMS SPA for administrative content",
+    ],
+    dataFlow: [
+      "CMS → Nest → Next.js public site",
+      "Shared UI foundations with sibling Prime properties",
+    ],
+    stacks: {
+      backend: ["nestjs", "node"],
+      websiteSpa: ["nextjs", "react", "typescript", "tailwind"],
+      cmsSpa: ["nextjs", "react"],
+    },
+  },
+  {
+    id: "baf",
+    slug: "BangladeshAthleticFederation(BAF)",
+    title: "Bangladesh Athletic Federation",
+    subtitle: "Federation website",
+    summary:
+      "Bangladesh Athletic Federation website — Next.js + .NET. One of the frontend developers.",
+    role: "Frontend",
+    type: "websites",
+    order: 5,
+    featured: false,
+    techTags: ["nextjs", "dotnet"],
+    ...imgs("Websites", "BangladeshAthleticFederation(BAF)"),
+    backend: [
+      ".NET backend services for federation content",
+      "API integration for public web delivery",
+    ],
+    uiState: [
+      "Next.js frontend surfaces",
+      "Responsive UI for federation communications",
+    ],
+    dataFlow: [
+      ".NET APIs → Next.js website",
+      "Content models consumed by public pages",
+    ],
+    stacks: {
+      backend: ["dotnet", "csharp"],
+      websiteSpa: ["nextjs", "react", "typescript", "tailwind"],
+      cmsSpa: ["nextjs", "react"],
+    },
+  },
+  {
+    id: "sky-sms",
+    slug: "SkySMS",
+    title: "SkySMS",
+    subtitle: "BTRC / BTCL bulk SMS platform",
+    summary:
+      "Bulk SMS web application for BTRC / BTCL — Next.js + NestJS. UI and one of the frontend developers.",
+    role: "UI · Frontend",
+    type: "applications",
+    order: 1,
+    featured: true,
+    techTags: ["nextjs", "nestjs"],
+    ...imgs("Applications", "SkySMS"),
+    backend: [
+      "NestJS queue and messaging orchestration",
+      "Bulk delivery APIs under concurrent load",
+    ],
+    uiState: [
+      "Operator UI for campaigns and delivery status",
+      "Next.js SPA for high-volume SMS workflows",
+    ],
+    dataFlow: [
+      "UI events → Nest workers → SMS providers",
+      "Delivery status feedback into the SPA",
+    ],
+    stacks: {
+      frontendSpa: ["nextjs", "react", "typescript", "tailwind"],
+      backend: ["nestjs", "node"],
+    },
+  },
+  {
+    id: "sky-chat",
+    slug: "SkyChat",
+    title: "SkyChat",
+    subtitle: "Real-time messaging application",
+    summary:
+      "Real-time chat web application — React + NestJS. Frontend developer and UI responsible.",
+    role: "UI · Frontend",
+    type: "applications",
+    order: 2,
+    featured: false,
+    techTags: ["react", "nestjs"],
+    ...imgs("Applications", "SkyChat"),
+    backend: [
+      "NestJS real-time messaging services",
+      "WebSocket-backed conversation channels",
+    ],
+    uiState: [
+      "React SPA conversation surfaces",
+      "UI ownership for chat operator flows",
+    ],
+    dataFlow: [
+      "Client events → Nest real-time layer → persistence",
+      "Live session sync across concurrent clients",
+    ],
+    stacks: {
+      frontendSpa: ["react", "typescript", "tailwind"],
+      backend: ["nestjs", "node"],
+    },
   },
   {
     id: "jonosheba",
+    slug: "Jonosheba",
     title: "Jonosheba",
-    subtitle: "Civic management portal",
+    subtitle: "Government complaint portal",
     summary:
-      "Civic portal with complex multi-step forms and disciplined state management across citizen-facing workflows.",
-    filters: ["mern", "vue-quasar"],
-    featured: true,
-    backend: [
-      "Multi-tier civic management system architecture",
-      "API design for multi-step workflow submissions",
-      "Backend integrations supporting form validation and persistence",
-    ],
-    uiState: [
-      "Complex multi-step form state machines",
-      "Modular UI component layers for workflow stages",
-      "Decoupled state management across long-running flows",
-    ],
-    dataFlow: [
-      "Step data collected → validated → submitted via APIs",
-      "Draft and progress state retained across sessions",
-      "Admin/CMS surfaces consume the same domain models",
-    ],
-  },
-  {
-    id: "pcnd-pbeh",
-    title: "PCND / PBEH",
-    subtitle: "Full-stack multi-tier CMS platforms",
-    summary:
-      "End-to-end multi-tier architectures spanning backend, CMS, and web for enterprise client platforms including PCND and PBEH.",
-    filters: ["mern", "dotnet"],
-    featured: true,
-    backend: [
-      "Multi-tier Backend / CMS / Frontend system design",
-      "Scalable backend integrations across MERN and .NET stacks",
-      "API design for content and domain services",
-    ],
-    uiState: [
-      "Design-token-driven UI component frameworks",
-      "Modular frontend trees for CMS and public web",
-      "Standardized component libraries across products",
-    ],
-    dataFlow: [
-      "CMS content → domain APIs → web surfaces",
-      "Shared data models across admin and public tiers",
-      "End-to-end deployment of Backend, CMS, and Web layers",
-    ],
-  },
-  {
-    id: "pbgs-pbf",
-    title: "PBGS & PBF",
-    subtitle: "Enterprise multi-tier systems",
-    summary:
-      "Architected and deployed end-to-end multi-tier systems (Backend, CMS, Frontend Web) for PBGS and PBF platforms.",
-    filters: ["mern", "dotnet"],
+      "Govt. complaint portal web application — Angular + .NET.",
+    role: "Full-stack UI architecture",
+    type: "applications",
+    order: 3,
     featured: false,
+    techTags: ["angular", "dotnet"],
+    ...imgs("Applications", "Jonosheba"),
     backend: [
-      "End-to-end multi-tier system architecture",
-      "Backend and CMS service boundaries",
-      "Scalable integrations across client products",
+      ".NET services for complaint workflows",
+      "API design for multi-step civic submissions",
     ],
     uiState: [
-      "Reusable UI component frameworks",
-      "Design tokens and modular frontend trees",
-      "High-performance UI delivery patterns",
+      "Angular SPA with complex multi-step forms",
+      "State management across long-running complaint flows",
     ],
     dataFlow: [
-      "Domain services → CMS → public web consumption",
-      "Shared architectural patterns across sibling products",
-      "Governed system modularity from prototype to production",
+      "Form steps → .NET APIs → case persistence",
+      "Admin and citizen surfaces on shared domain models",
     ],
+    stacks: {
+      frontendSpa: ["angular", "typescript"],
+      backend: ["dotnet", "csharp"],
+    },
   },
   {
-    id: "codezzi-platform",
-    title: "Codezzi Platform",
-    subtitle: "Corporate site & design system",
+    id: "sky-vat",
+    slug: "SkyVat",
+    title: "SkyVat",
+    subtitle: "VAT calculation software",
     summary:
-      "Custom dark-themed corporate platform with bespoke UI animations and sleek layout architecture for Codezzi.",
-    filters: ["mern"],
+      "VAT calculation web application — .NET + Angular. UI and one of the frontend developers.",
+    role: "UI · Frontend",
+    type: "applications",
+    order: 4,
     featured: false,
+    techTags: ["angular", "dotnet"],
+    ...imgs("Applications", "SkyVat"),
     backend: [
-      "Corporate platform content and service integrations",
-      "Architecture aligned with in-house product standards",
+      ".NET services for VAT calculation rules",
+      "API contracts for fiscal workflows",
     ],
     uiState: [
-      "Bespoke UI animation and layout architecture",
-      "Dark-themed design system and component trees",
-      "Design-token-driven visual language",
+      "Angular SPA for VAT operators",
+      "UI architecture for calculation and reporting views",
     ],
     dataFlow: [
-      "Content and marketing surfaces driven by platform architecture",
-      "Shared UI foundations reused across Codezzi products",
+      "UI inputs → .NET calculation engine → results",
+      "Persisted fiscal state consumed by Angular views",
     ],
-  },
-  {
-    id: "proficient-boilerplate",
-    title: "Enterprise Boilerplate Platform",
-    subtitle: "Vue 3 + Quasar foundations",
-    summary:
-      "Modular feature architecture and foundational codebases for an enterprise boilerplate platform at Proficient Information Systems.",
-    filters: ["vue-quasar"],
-    featured: false,
-    backend: [
-      "Reusable API integration layers for client onboarding",
-      "Decoupled service contracts for feature modules",
-    ],
-    uiState: [
-      "Vue 3 + Quasar modular UI component layers",
-      "Foundational boilerplate for rapid feature delivery",
-      "Decoupled UI architecture to shorten delivery cycles",
-    ],
-    dataFlow: [
-      "Feature modules → shared API integrations → client apps",
-      "Boilerplate foundations accelerate system onboarding",
-    ],
+    stacks: {
+      frontendSpa: ["angular", "typescript"],
+      backend: ["dotnet", "csharp"],
+    },
   },
 ];
 
@@ -198,7 +381,7 @@ export const competencies = [
     id: "system-engineering",
     title: "System Engineering",
     description:
-      "Databases, API design, queue orchestration, and multi-tier Backend/CMS/Web architectures across MERN and .NET.",
+      "Databases, API design, queue orchestration, and multi-tier Backend/CMS/Web architectures across Nest, .NET, and Node.",
     icon: "server" as const,
   },
   {
@@ -220,7 +403,8 @@ export const competencies = [
 export const research = {
   venue: "Journal of Medical Artificial Intelligence (JMAI)",
   role: "Co-Author",
-  title: "Peer-reviewed research on applied artificial intelligence in healthcare",
+  title:
+    "A data driven analysis of maternal health risk indicators using machine learning techniques.",
   year: "2026",
   url: "https://jmai.amegroups.org/article/view/11322",
 } as const;
@@ -230,11 +414,13 @@ export const education = [
     title: "B.Sc. in Computer Science & Engineering",
     org: "American International University-Bangladesh (AIUB)",
     detail: "Graduated 2025",
+    kind: "degree" as const,
   },
   {
     title: "Cisco Certified Network Associate (CCNA)",
     org: "Cisco Systems",
     detail: "Certification",
+    kind: "cert" as const,
   },
 ] as const;
 
@@ -247,7 +433,7 @@ export const experience = [
     period: "February 2026 – Present",
     highlights: [
       "Design and govern core system architectures and UI component frameworks across client and in-house products.",
-      "Architected end-to-end multi-tier systems including SkyChat, SkySMS, Jonosheba, PBGS, PCND, PBF, PBEH, and the Codezzi Platform.",
+      "Architected end-to-end systems including SkyChat, SkySMS, SkyVat, Jonosheba, PBGS, PCND, PBF, BAF, and Codezzi.",
       "Integrated AI-driven developer workflows to accelerate architectural prototyping and enforce clean system design.",
     ],
   },
@@ -265,27 +451,84 @@ export const experience = [
   },
 ] as const;
 
-export const techStack = [
-  "React",
-  "TypeScript",
-  "Vue 3",
-  "Quasar",
-  "Angular",
-  "Tailwind CSS",
-  "Node.js",
-  "Express",
-  "MongoDB",
-  ".NET Core",
-  "WebSockets",
-  "REST APIs",
-  "Git",
-  "Vite",
-] as const;
+export type ExpertiseGroup = {
+  id: string;
+  label: string;
+  items: { id: TechId; name: string }[];
+};
+
+export const expertiseGroups: ExpertiseGroup[] = [
+  {
+    id: "frontend",
+    label: "Frontend & UI",
+    items: [
+      { id: "nextjs", name: "Next.js" },
+      { id: "react", name: "React" },
+      { id: "angular", name: "Angular" },
+      { id: "quasar", name: "Quasar" },
+      { id: "tailwind", name: "Tailwind CSS" },
+      { id: "framer", name: "Framer Motion" },
+      { id: "html", name: "HTML" },
+      { id: "css", name: "CSS" },
+      { id: "scss", name: "SCSS" },
+    ],
+  },
+  {
+    id: "backend",
+    label: "Backend & APIs",
+    items: [
+      { id: "nestjs", name: "NestJS" },
+      { id: "dotnet", name: ".NET" },
+      { id: "csharp", name: "C#" },
+      { id: "node", name: "Node.js" },
+    ],
+  },
+  {
+    id: "languages",
+    label: "Languages",
+    items: [
+      { id: "typescript", name: "TypeScript" },
+      { id: "javascript", name: "JavaScript" },
+      { id: "cpp", name: "C++" },
+    ],
+  },
+  {
+    id: "data",
+    label: "Data & SQL",
+    items: [
+      { id: "postgres", name: "PostgreSQL" },
+      { id: "mysql", name: "MySQL" },
+      { id: "mssql", name: "MSSQL" },
+      { id: "plsql", name: "PL/SQL" },
+    ],
+  },
+];
 
 export const navLinks = [
   { href: "#architecture", label: "Architecture" },
   { href: "#competencies", label: "Competencies" },
   { href: "#research", label: "Research" },
-  { href: "#experience", label: "Experience" },
+  { href: "#expertise", label: "Expertise" },
   { href: "#contact", label: "Contact" },
 ] as const;
+
+export const workflowCommands = [
+  "cursor open --architect portfolio-system",
+  "npm run design:tokens",
+  "npx scaffold multi-tier --backend --cms --web",
+  "git ship --clean-architecture",
+] as const;
+
+export const workflowOutputs: Record<number, string[]> = {
+  0: [
+    "✔ Loaded system architecture context",
+    "✔ UI component tree mapped",
+    "✔ Ready for AI-assisted prototyping",
+  ],
+  1: ["✔ Design tokens validated", "✔ Tailwind systems synced"],
+  2: [
+    "✔ Backend / CMS / Web tiers scaffolded",
+    "✔ Queue + REST boundaries defined",
+  ],
+  3: ["✔ Clean architecture checks passed", "✔ Production path ready"],
+};

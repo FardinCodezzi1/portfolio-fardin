@@ -43,12 +43,12 @@ export function FloatingNavbar() {
         >
           {profile.firstName.toUpperCase()}
         </a>
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-0.5 lg:flex">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="rounded-sm px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:text-accent"
+              className="rounded-sm px-2 py-1.5 text-xs font-medium text-muted transition-colors hover:text-accent"
             >
               {link.label}
             </a>

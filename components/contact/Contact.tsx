@@ -1,158 +1,126 @@
 "use client";
 
-import { useState, type FormEvent, type MouseEvent } from "react";
-import { Code2, Link2, Mail, Phone } from "lucide-react";
+import { Code2, Link2, Mail } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { fadeIn, sectionViewport } from "@/lib/animations";
 import { profile } from "@/lib/data";
 
+const socials = [
+  {
+    label: "Email",
+    href: `mailto:${profile.email}`,
+    detail: profile.email,
+    icon: Mail,
+  },
+  {
+    label: "LinkedIn",
+    href: profile.linkedin,
+    detail: "linkedin.com/in/fardin-abu-ubaid",
+    icon: Link2,
+    external: true,
+  },
+  {
+    label: "GitHub",
+    href: profile.github,
+    detail: "github.com/FardinCodezzi1",
+    icon: Code2,
+    external: true,
+  },
+] as const;
+
 export function Contact() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [coverPos, setCoverPos] = useState({ x: 50, y: 40 });
-
-  function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio inquiry from ${name || "someone"}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\n${message}`,
-    );
-    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-  }
-
-  function onCoverMove(e: MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setCoverPos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    });
-  }
-
   return (
     <section id="contact" className="scroll-mt-24 py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-4 md:px-6">
-        <motion.div
-          variants={fadeIn}
-          initial="hidden"
-          whileInView="visible"
-          viewport={sectionViewport}
-          onMouseMove={onCoverMove}
-          className="group relative mb-12 overflow-hidden rounded-md border border-muted/25 bg-surface px-6 py-14 text-center sm:px-10"
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-40 transition-opacity duration-500 group-hover:opacity-70"
-            style={{
-              background: `radial-gradient(600px circle at ${coverPos.x}% ${coverPos.y}%, color-mix(in srgb, var(--main-color) 22%, transparent), transparent 50%)`,
-            }}
-          />
-          <p className="relative font-mono text-xs tracking-[0.18em] text-accent uppercase">
-            Hire
-          </p>
-          <h2 className="relative mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Let&apos;s build something
-          </h2>
-          <p className="relative mx-auto mt-3 max-w-lg text-sm text-muted">
-            {profile.remoteAvailable
-              ? "Open for global remote roles — Full-Stack System Engineer & Software Architect."
-              : "Available for selected engagements."}
-          </p>
-        </motion.div>
+        <div className="overflow-hidden rounded-md border border-muted/25 bg-surface">
+          <div className="grid lg:grid-cols-2">
+            <motion.div
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={sectionViewport}
+              className="flex flex-col justify-center p-6 sm:p-8 lg:p-10"
+            >
+              <p className="font-mono text-xs tracking-[0.18em] text-accent uppercase">
+                Contact
+              </p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                Get in touch
+              </h2>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">
+                Open for global remote roles in system architecture, full-stack
+                product work, and AI-integrated platforms. Reach me directly —
+                no form, no waiting.
+              </p>
 
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Direct links</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <a
-                  href={`mailto:${profile.email}`}
-                  className="inline-flex items-center gap-2 text-muted transition-colors hover:text-accent"
-                >
-                  <Mail className="h-4 w-4" />
-                  {profile.email}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`tel:${profile.phone.replace(/\s/g, "")}`}
-                  className="inline-flex items-center gap-2 text-muted transition-colors hover:text-accent"
-                >
-                  <Phone className="h-4 w-4" />
-                  {profile.phone}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={profile.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-muted transition-colors hover:text-accent"
-                >
-                  <Link2 className="h-4 w-4" />
-                  LinkedIn
-                </a>
-              </li>
-              <li>
-                <a
-                  href={profile.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-muted transition-colors hover:text-accent"
-                >
-                  <Code2 className="h-4 w-4" />
-                  GitHub
-                </a>
-              </li>
-            </ul>
+              <ul className="mt-8 space-y-3">
+                {socials.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.label}>
+                      <a
+                        href={item.href}
+                        {...("external" in item && item.external
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className="group flex items-center gap-3 rounded-md border border-muted/30 bg-background/50 px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/5"
+                      >
+                        <span className="flex h-10 w-10 items-center justify-center rounded-sm border border-accent/30 bg-accent/10 text-accent">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-xs font-medium text-muted">
+                            {item.label}
+                          </span>
+                          <span className="block truncate text-sm text-foreground group-hover:text-accent">
+                            {item.detail}
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </motion.div>
+
+            <motion.div
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={sectionViewport}
+              className="relative min-h-[280px] border-t border-muted/20 bg-background/40 lg:min-h-full lg:border-t-0 lg:border-l"
+            >
+              {/* Aspect matches world.svg viewBox 2000×857 */}
+              <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+                <div className="relative w-full" style={{ aspectRatio: "2000 / 857" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={profile.worldMap}
+                    alt="World map with Dhaka, Bangladesh marked"
+                    className="absolute inset-0 h-full w-full object-fill opacity-90 [filter:grayscale(1)_brightness(0.5)_contrast(1.15)_sepia(0.15)]"
+                  />
+                  {/*
+                    Dhaka ≈ 90.4°E, 23.8°N on equirectangular 2000×857:
+                    x = (90.4+180)/360 * 100 ≈ 75.1%
+                    y = (90-23.8)/180 * 100 ≈ 36.8%
+                  */}
+                  <div
+                    className="absolute z-10 -translate-x-1/2 -translate-y-full"
+                    style={{ left: "75.1%", top: "36.8%" }}
+                  >
+                    <div className="mb-1 rounded-sm border border-muted/40 bg-surface px-2 py-1 text-[10px] whitespace-nowrap text-foreground shadow-md sm:text-xs">
+                      Dhaka · I&apos;m here
+                    </div>
+                    <div className="mx-auto h-6 w-px bg-gradient-to-b from-accent to-transparent" />
+                    <span className="relative mx-auto flex h-3 w-3">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-45" />
+                      <span className="relative inline-flex h-3 w-3 rounded-full bg-accent shadow-[0_0_14px_var(--main-color)]" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
-
-          <form onSubmit={onSubmit} className="space-y-4 rounded-md border border-muted/25 bg-surface p-5 sm:p-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
-              <Textarea
-                id="message"
-                name="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="What are you building?"
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full sm:w-auto">
-              Send message
-            </Button>
-            <p className="text-xs text-muted">
-              Opens your email client with a prefilled message — no account required.
-            </p>
-          </form>
         </div>
       </div>
     </section>

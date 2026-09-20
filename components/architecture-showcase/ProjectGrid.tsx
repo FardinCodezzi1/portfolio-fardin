@@ -6,23 +6,89 @@ import { ArrowUpRight } from "lucide-react";
 import { ProjectDetail } from "@/components/architecture-showcase/ProjectDetail";
 import { Badge } from "@/components/ui/badge";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { ImagesBadge } from "@/components/ui/images-badge";
+import { TechIcon } from "@/components/ui/tech-icon";
 import { fadeIn, sectionViewport, staggerContainer } from "@/lib/animations";
 import {
-  projectFilters,
+  projectTypeTabs,
   projects,
   type Project,
-  type ProjectFilter,
+  type ProjectType,
 } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
+function ProjectCard({
+  project,
+  onOpen,
+}: {
+  project: Project;
+  onOpen: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="h-full w-full text-left"
+    >
+      <GlowingEffect className="h-full">
+        <div className="flex h-full flex-col gap-4 overflow-visible p-5">
+          <div className="flex items-start justify-between gap-3">
+            <ImagesBadge
+              text={project.title}
+              images={project.previewImages}
+              hovered={hovered}
+              className="max-w-[85%]"
+              folderSize={{ width: 40, height: 28 }}
+              hoverImageSize={{ width: 64, height: 44 }}
+              hoverTranslateY={-48}
+            />
+            <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-accent" />
+          </div>
+          <p className="text-xs text-muted">{project.subtitle}</p>
+          <p className="text-sm leading-relaxed text-muted">{project.summary}</p>
+          <p className="font-mono text-[10px] tracking-wide text-accent uppercase">
+            {project.role}
+          </p>
+          <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-2">
+            {project.techTags.map((t) => (
+              <TechIcon key={t} id={t} />
+            ))}
+            {project.featured ? (
+              <Badge className="border-accent/40 text-accent">featured</Badge>
+            ) : null}
+          </div>
+        </div>
+      </GlowingEffect>
+    </button>
+  );
+}
+
 export function ProjectGrid() {
-  const [filter, setFilter] = useState<ProjectFilter>("all");
+  const [filter, setFilter] = useState<ProjectType | "all">("all");
   const [selected, setSelected] = useState<Project | null>(null);
 
   const visible = useMemo(() => {
-    if (filter === "all") return projects;
-    return projects.filter((p) => p.filters.includes(filter));
+    const list =
+      filter === "all" ? projects : projects.filter((p) => p.type === filter);
+    return [...list].sort((a, b) => {
+      if (a.featured !== b.featured) return a.featured ? -1 : 1;
+      return a.order - b.order;
+    });
   }, [filter]);
+
+  const grouped = useMemo(() => {
+    if (filter !== "all") {
+      return [{ type: filter, items: visible }];
+    }
+    return (["websites", "applications"] as ProjectType[]).map((type) => ({
+      type,
+      items: visible.filter((p) => p.type === type),
+    }));
+  }, [filter, visible]);
 
   return (
     <section id="architecture" className="scroll-mt-24 py-20 md:py-28">
@@ -35,13 +101,13 @@ export function ProjectGrid() {
             Architecture showcase
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
-            Filterable production systems with backend logic, UI state models, and
-            data-flow breakdowns — not just screenshots.
+            Websites and applications shipped in production — hover a card to
+            preview, click for architecture and stacks.
           </p>
         </div>
 
         <div className="mb-8 flex flex-wrap gap-2">
-          {projectFilters.map((item) => (
+          {projectTypeTabs.map((item) => (
             <button
               key={item.id}
               type="button"
@@ -58,48 +124,35 @@ export function ProjectGrid() {
           ))}
         </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={sectionViewport}
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {visible.map((project) => (
-            <motion.div key={project.id} variants={fadeIn}>
-              <button
-                type="button"
-                onClick={() => setSelected(project)}
-                className="h-full w-full text-left"
-              >
-                <GlowingEffect className="h-full">
-                  <div className="flex h-full flex-col gap-4 p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-base font-semibold text-foreground">
-                          {project.title}
-                        </h3>
-                        <p className="mt-1 text-xs text-muted">{project.subtitle}</p>
-                      </div>
-                      <ArrowUpRight className="h-4 w-4 shrink-0 text-accent" />
-                    </div>
-                    <p className="text-sm leading-relaxed text-muted">
-                      {project.summary}
-                    </p>
-                    <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
-                      {project.filters.map((f) => (
-                        <Badge key={f}>{f}</Badge>
-                      ))}
-                      {project.featured ? (
-                        <Badge className="border-accent/40 text-accent">featured</Badge>
-                      ) : null}
-                    </div>
-                  </div>
-                </GlowingEffect>
-              </button>
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="space-y-12">
+          {grouped.map((group) =>
+            group.items.length ? (
+              <div key={group.type}>
+                {filter === "all" ? (
+                  <h3 className="mb-4 font-mono text-xs tracking-[0.16em] text-muted uppercase">
+                    {group.type}
+                  </h3>
+                ) : null}
+                <motion.div
+                  variants={staggerContainer}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={sectionViewport}
+                  className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  {group.items.map((project) => (
+                    <motion.div key={project.id} variants={fadeIn} className="overflow-visible">
+                      <ProjectCard
+                        project={project}
+                        onOpen={() => setSelected(project)}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+            ) : null,
+          )}
+        </div>
       </div>
 
       <ProjectDetail
