@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { ThemeProvider } from "@/lib/theme";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
@@ -40,13 +41,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-theme="dark"
-      className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={cn(
+        "h-full antialiased",
+        ibmPlexSans.variable,
+        ibmPlexMono.variable,
+        "font-sans",
+      )}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+      <body className="flex min-h-full flex-col bg-background text-foreground font-sans">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

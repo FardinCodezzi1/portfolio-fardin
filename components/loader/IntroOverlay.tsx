@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { SparklesCore } from "@/components/ui/sparkles";
 import { introOverlay } from "@/lib/animations";
 import { profile } from "@/lib/data";
 
@@ -18,7 +19,7 @@ export function IntroOverlay() {
     const timer = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(STORAGE_KEY, "1");
-    }, 1800);
+    }, 3800);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -32,41 +33,34 @@ export function IntroOverlay() {
           initial="initial"
           exit="exit"
         >
-          <div className="relative px-6 text-center">
+          <div className="relative flex w-full max-w-lg flex-col items-center px-6 text-center">
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="font-mono text-2xl font-medium tracking-tight text-foreground sm:text-3xl"
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-10 font-mono text-3xl font-medium tracking-tight text-foreground sm:text-4xl"
             >
               Hi, I&apos;m{" "}
               <span className="text-accent">{profile.firstName}.</span>
             </motion.p>
             <motion.div
               aria-hidden
-              className="mx-auto mt-4 h-px w-16 bg-accent/70"
+              className="relative z-10 mx-auto mt-5 h-px w-28 bg-gradient-to-r from-transparent via-accent to-transparent"
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
-              transition={{ delay: 0.25, duration: 0.4 }}
+              transition={{ delay: 0.35, duration: 0.5 }}
             />
-            <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <motion.span
-                  key={i}
-                  className="absolute h-1 w-1 rounded-sm bg-accent/50"
-                  style={{
-                    left: `${8 + ((i * 7) % 84)}%`,
-                    top: `${20 + ((i * 11) % 60)}%`,
-                  }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
-                  transition={{
-                    duration: 1.4,
-                    delay: 0.15 + i * 0.05,
-                    ease: "easeOut",
-                  }}
-                />
-              ))}
+            <div className="relative mt-2 h-40 w-full">
+              <SparklesCore
+                id="intro-sparkles"
+                background="transparent"
+                minSize={0.4}
+                maxSize={1.2}
+                particleDensity={900}
+                className="h-full w-full"
+                particleColor="#e2b714"
+                speed={1}
+              />
             </div>
           </div>
         </motion.div>

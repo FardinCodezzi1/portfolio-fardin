@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowDownRight, Download, Mail } from "lucide-react";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
-import { FlippingHeadline } from "@/components/hero/FlippingHeadline";
+import { FlipWords } from "@/components/ui/flip-words";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 import { heroPhrases, profile } from "@/lib/data";
 
@@ -15,7 +15,7 @@ export function Hero() {
       id="top"
       className="relative flex min-h-[100svh] items-center overflow-hidden pt-24 pb-16"
     >
-      <BackgroundBeams />
+      <BackgroundBeams className="opacity-80" />
       <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-10 px-4 md:grid-cols-[1.2fr_0.8fr] md:items-center md:gap-12 md:px-6">
         <motion.div
           variants={staggerContainer}
@@ -35,8 +35,16 @@ export function Hero() {
           >
             {profile.headline}
           </motion.h1>
-          <motion.div variants={fadeInUp}>
-            <FlippingHeadline phrases={heroPhrases} />
+          <motion.div
+            variants={fadeInUp}
+            className="flex flex-wrap items-baseline gap-x-2 font-mono text-base text-foreground sm:text-lg"
+          >
+            <span className="text-muted">I build</span>
+            <FlipWords
+              words={[...heroPhrases]}
+              className="px-0 font-semibold text-accent dark:text-accent"
+              duration={2800}
+            />
           </motion.div>
           <motion.p
             variants={fadeInUp}
@@ -57,7 +65,7 @@ export function Hero() {
                 <Download className="h-4 w-4" />
               </a>
             </Button>
-            <Button asChild variant="ghost">
+            <Button asChild variant="outline">
               <a href="#contact">
                 Contact Me
                 <Mail className="h-4 w-4" />
