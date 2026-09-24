@@ -20,7 +20,13 @@ export type TechId =
   | "plsql"
   | "csharp"
   | "cpp"
-  | "node";
+  | "node"
+  | "vue"
+  | "redux"
+  | "express"
+  | "mongodb"
+  | "ts"
+  | "js";
 
 export type WebsiteStacks = {
   backend: TechId[];
