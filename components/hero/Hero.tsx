@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center overflow-hidden pt-24 pb-16"
+      className="relative flex min-h-svh items-center overflow-hidden pt-24 pb-16"
     >
       <BackgroundBeams className="opacity-80" />
       <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-10 px-4 md:grid-cols-[1.2fr_0.8fr] md:items-center md:gap-12 md:px-6">
@@ -80,7 +80,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto w-full max-w-sm md:max-w-none"
         >
-          <div className="relative aspect-[4/5] overflow-hidden rounded-md border border-muted/25 bg-surface">
+          <div className="relative aspect-4/5 overflow-hidden rounded-md border border-muted/25 bg-surface">
             <Image
               src={profile.photo}
               alt={profile.name}
@@ -89,7 +89,7 @@ export function Hero() {
               sizes="(max-width: 768px) 90vw, 380px"
               className="object-cover object-top"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-background/70 via-transparent to-transparent" />
           </div>
           <p className="mt-3 font-mono text-xs text-muted">{profile.name}</p>
         </motion.div>
