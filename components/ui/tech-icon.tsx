@@ -27,6 +27,12 @@ const SLUGS: Record<TechId, string> = {
   csharp: "cs",
   cpp: "cpp",
   node: "nodejs",
+  vue: "vue",
+  redux: "redux",
+  express: "express",
+  mongodb: "mongodb",
+  ts: "ts",
+  js: "js",
 };
 
 /** simpleicons.org fallbacks for missing / wrong skillicons */
@@ -36,6 +42,9 @@ const SIMPLE: Partial<Record<TechId, string>> = {
   mssql: "microsoftsqlserver",
   plsql: "oracle",
   scss: "sass",
+  express: "express",
+  mongodb: "mongodb",
+  redux: "redux",
 };
 
 const LABELS: Record<TechId, string> = {
@@ -59,6 +68,12 @@ const LABELS: Record<TechId, string> = {
   csharp: "C#",
   cpp: "C++",
   node: "Node.js",
+  vue: "Vue.js",
+  redux: "Redux",
+  express: "Express.js",
+  mongodb: "MongoDB",
+  ts: "TypeScript",
+  js: "JavaScript",
 };
 
 export function techLabel(id: TechId) {
@@ -107,7 +122,7 @@ export function TechIcon({
         alt={label}
         width={size}
         height={size}
-        className="rounded-[4px]"
+        className="rounded-sm"
         unoptimized
         onError={() => {
           if (SIMPLE[id]) {
