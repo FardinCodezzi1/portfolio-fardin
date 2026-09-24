@@ -56,20 +56,20 @@ function PlanetIcon({
 
   const x = Math.cos(angle) * orbitWidth;
   const y = Math.sin(angle) * orbitHeight;
-  
-  // Front icons pass in front of central avatar (z-index 40 > 20)
-  // Back icons pass behind central avatar (z-index 5 < 20)
+
   const isFront = y > 0;
   const showTooltip = isHovered || (isWithinAutoplayZone && isFront);
 
   return (
-    <motion.div
-      className="absolute top-1/2 left-1/2"
-      style={{ x, y, zIndex: isFront ? 40 : 5 }}
+    <div
+      className="absolute top-1/2 left-1/2 transition-transform duration-75 ease-linear"
+      style={{
+        transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+        zIndex: isFront ? 40 : 5,
+      }}
     >
       <div
         style={{
-          transform: "translate(-50%, -50%)",
           rotate: `${-systemRotation}deg`,
         }}
         className="relative flex flex-col items-center justify-center"
@@ -129,19 +129,49 @@ function PlanetIcon({
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-// --- Main TechStack Section Component ---
+// Custom Categorization mapping including Vue and .NET
+const CUSTOM_CATEGORY_MAP: Record<string, TechId[]> = {
+  "Frontend Frameworks & Libraries": [
+    "nextjs",
+    "react",
+    "vue",
+    "angular",
+    "redux",
+  ],
+  "Styling & UI Systems": [
+    "tailwind",
+    "framer",
+    "css",
+    "scss",
+  ],
+  "Backend & APIs": [
+    "node",
+    "express",
+    "nestjs",
+    "dotnet",
+  ],
+  "Languages & Databases": [
+    "ts",
+    "js",
+    "postgres",
+    "mongodb",
+  ],
+};
+
 export function TechStack() {
   const [isPaused, setIsPaused] = useState(false);
   const [masterAngle, setMasterAngle] = useState(0);
   const [screenScale, setScreenScale] = useState(1);
+  const [mounted, setMounted] = useState(false);
 
   const timeOffset = useRef(0);
   const lastTimeRef = useRef<number | null>(null);
 
+  // Solves "Calling setState synchronously within an effect" warning
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -149,7 +179,14 @@ export function TechStack() {
       else if (width < 1024) setScreenScale(0.85);
       else setScreenScale(1);
     };
+
     handleResize();
+    
+    // Schedule state update asynchronously to avoid cascading render lint rule
+    requestAnimationFrame(() => {
+      setMounted(true);
+    });
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -158,9 +195,8 @@ export function TechStack() {
   const ORBIT_W = 420 * screenScale;
   const ORBIT_H = 140 * screenScale;
   const AVATAR_SIZE = 340 * screenScale;
-  const DURATION = 35; // Seconds per complete orbit revolution
+  const DURATION = 35;
 
-  // Filter out mssql and plsql from planet list
   const planetData = useMemo(() => {
     const items = expertiseGroups
       .flatMap((group) =>
@@ -179,6 +215,7 @@ export function TechStack() {
   }, []);
 
   useAnimationFrame((time) => {
+    if (!mounted) return;
     if (lastTimeRef.current === null) {
       lastTimeRef.current = time;
       return;
@@ -198,7 +235,6 @@ export function TechStack() {
       id="expertise"
       className="relative scroll-mt-24 overflow-hidden bg-[#07090e] border-y border-white/10 py-20 md:py-28 text-white"
     >
-      {/* Deep Blue/Cyan Background Ambient Glows */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-137.5 w-137.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-[140px]" />
       <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-95 w-95 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/15 blur-[100px]" />
 
@@ -211,18 +247,16 @@ export function TechStack() {
             Built with tools I actually ship in
           </h2>
           <p className="mt-3 text-sm text-slate-400 sm:text-base">
-            Frontend systems, backend services, languages, and databases orbiting the core workflow.
+            Frontend systems, backend services, styling tools, and databases orbiting the core workflow.
           </p>
         </div>
 
-        {/* --- Solar System Interactive Stage --- */}
+        {/* Orbit System Stage */}
         <div className="relative my-4 flex aspect-16/10 w-full max-w-4xl items-center justify-center mx-auto select-none touch-none">
-          {/* Tilted Orbit Container */}
           <div
             style={{ rotate: `${SYSTEM_TILT}deg` }}
             className="relative flex h-full w-full items-center justify-center"
           >
-            {/* SVG Orbit Path Line */}
             <svg
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-visible pointer-events-none z-0"
               style={{ width: 1, height: 1 }}
@@ -239,7 +273,7 @@ export function TechStack() {
               />
             </svg>
 
-            {/* Central Photo Element - Fixed inside stacking container at z-index 20 */}
+            {/* Central Avatar */}
             <motion.div
               animate={{ y: [-8 * screenScale, 8 * screenScale] }}
               transition={{
@@ -248,18 +282,18 @@ export function TechStack() {
                 repeatType: "mirror",
                 ease: "easeInOut",
               }}
-              className="absolute z-20 flex items-center justify-center pointer-events-none"
+              className="absolute z-20 bottom-35 flex items-center justify-center pointer-events-none"
               style={{
                 width: AVATAR_SIZE,
                 height: AVATAR_SIZE,
-                rotate: `${-SYSTEM_TILT}deg`, // Un-tilt image so photo stays upright
+                rotate: `${-SYSTEM_TILT}deg`,
               }}
             >
               <div className="relative h-full w-full">
                 <div className="absolute inset-8 -z-10 rounded-full bg-cyan-400/15 blur-2xl" />
                 <Image
                   src="/assets/fardin/fardinSun.png"
-                  alt="Fardin"
+                  alt="Avatar"
                   fill
                   className="object-contain brightness-75 contrast-[1.05] drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)]"
                   priority
@@ -267,70 +301,64 @@ export function TechStack() {
               </div>
             </motion.div>
 
-            {/* Orbiting Tech Icons (Front: z-40, Back: z-5) */}
-            {planetData.map((p, i) => (
-              <PlanetIcon
-                key={`${p.id}-${i}`}
-                data={p}
-                angle={masterAngle + p.offset}
-                orbitWidth={ORBIT_W}
-                orbitHeight={ORBIT_H}
-                setGlobalPaused={setIsPaused}
-                systemRotation={SYSTEM_TILT}
-              />
-            ))}
+            {/* Orbiting Icons */}
+            {mounted &&
+              planetData.map((p, i) => (
+                <PlanetIcon
+                  key={`${p.id}-${i}`}
+                  data={p}
+                  angle={masterAngle + p.offset}
+                  orbitWidth={ORBIT_W}
+                  orbitHeight={ORBIT_H}
+                  setGlobalPaused={setIsPaused}
+                  systemRotation={SYSTEM_TILT}
+                />
+              ))}
           </div>
         </div>
 
-        {/* --- Expertise Category Grid Breakdown --- */}
+        {/* Categorized Technical Breakdown Grid */}
         <div className="mt-12 space-y-10">
-          {expertiseGroups.map((group, gi) => {
-            const filteredItems = group.items.filter(
-              (item) => item.id !== "mssql" && item.id !== "plsql"
-            );
-            if (filteredItems.length === 0) return null;
+          {Object.entries(CUSTOM_CATEGORY_MAP).map(([categoryName, itemIds], gi) => (
+            <motion.div
+              key={categoryName}
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={sectionViewport}
+            >
+              <div className="mb-4 flex items-center gap-3">
+                <span className="font-mono text-xs text-cyan-400">
+                  0{gi + 1}
+                </span>
+                <h3 className="text-sm font-semibold tracking-wide text-slate-200 uppercase">
+                  {categoryName}
+                </h3>
+                <span className="h-px flex-1 bg-white/10" />
+              </div>
 
-            return (
-              <motion.div
-                key={group.id}
-                variants={fadeIn}
-                initial="hidden"
-                whileInView="visible"
-                viewport={sectionViewport}
-              >
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="font-mono text-xs text-cyan-400">
-                    0{gi + 1}
-                  </span>
-                  <h3 className="text-sm font-semibold tracking-wide text-slate-200 uppercase">
-                    {group.label}
-                  </h3>
-                  <span className="h-px flex-1 bg-white/10" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="group flex items-center gap-3 rounded-md border border-white/10 bg-[#0f1422]/80 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/40 hover:bg-cyan-500/10"
-                    >
-                      <Image
-                        src={skillSrc(item.id)}
-                        alt={techLabel(item.id)}
-                        width={28}
-                        height={28}
-                        className="rounded-sm transition-transform duration-300 group-hover:scale-110"
-                        unoptimized
-                      />
-                      <span className="text-xs font-medium text-slate-400 group-hover:text-slate-100">
-                        {techLabel(item.id)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            );
-          })}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {itemIds.map((id) => (
+                  <div
+                    key={id}
+                    className="group flex items-center gap-3 rounded-md border border-white/10 bg-[#0f1422]/80 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/40 hover:bg-cyan-500/10"
+                  >
+                    <Image
+                      src={skillSrc(id)}
+                      alt={techLabel(id)}
+                      width={28}
+                      height={28}
+                      className="rounded-sm transition-transform duration-300 group-hover:scale-110"
+                      unoptimized
+                    />
+                    <span className="text-xs font-medium text-slate-400 group-hover:text-slate-100">
+                      {techLabel(id)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

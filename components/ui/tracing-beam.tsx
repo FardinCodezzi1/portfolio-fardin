@@ -34,16 +34,19 @@ export const TracingBeam = ({
     return () => ro.disconnect();
   }, []);
 
+  // Reduce offset to 35px so the path terminates flush near the bottom card
+  const OFFSET = 35;
+  const h = Math.max(svgHeight - OFFSET, 100);
+
   const y1 = useSpring(
-    useTransform(scrollYProgress, [0, 0.8], [50, Math.max(svgHeight, 80)]),
-    { stiffness: 500, damping: 90 },
+    useTransform(scrollYProgress, [0, 0.9], [50, Math.max(h - 20, 80)]),
+    { stiffness: 500, damping: 90 }
   );
   const y2 = useSpring(
-    useTransform(scrollYProgress, [0, 1], [50, Math.max(svgHeight - 200, 60)]),
-    { stiffness: 500, damping: 90 },
+    useTransform(scrollYProgress, [0, 1], [50, Math.max(h - 80, 60)]),
+    { stiffness: 500, damping: 90 }
   );
 
-  const h = Math.max(svgHeight, 200);
   const path = `M 1 0V -36 l 18 24 V ${h * 0.8} l -18 24 V ${h}`;
 
   return (
@@ -55,7 +58,7 @@ export const TracingBeam = ({
           left: "max(0.75rem, calc((100% - 72rem) / 2 - 2.75rem))",
         }}
       >
-        <div className="ml-[27px] flex h-4 w-4 items-center justify-center rounded-full border border-muted/40">
+        <div className="ml-6.75 flex h-4 w-4 items-center justify-center rounded-full border border-muted/40">
           <div
             className="h-2 w-2 rounded-full bg-accent"
             style={{
