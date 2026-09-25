@@ -167,11 +167,11 @@ export function TechStack() {
   const [masterAngle, setMasterAngle] = useState(0);
   const [screenScale, setScreenScale] = useState(1);
   const [mounted, setMounted] = useState(false);
+  const [handIconIndex, setHandIconIndex] = useState(0);
 
   const timeOffset = useRef(0);
   const lastTimeRef = useRef<number | null>(null);
 
-  // Solves "Calling setState synchronously within an effect" warning
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -181,8 +181,7 @@ export function TechStack() {
     };
 
     handleResize();
-    
-    // Schedule state update asynchronously to avoid cascading render lint rule
+
     requestAnimationFrame(() => {
       setMounted(true);
     });
@@ -214,6 +213,15 @@ export function TechStack() {
     }));
   }, []);
 
+  // Interval loop for cycling the hand icon
+  useEffect(() => {
+    if (!planetData.length) return;
+    const interval = setInterval(() => {
+      setHandIconIndex((prev) => (prev + 1) % planetData.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [planetData.length]);
+
   useAnimationFrame((time) => {
     if (!mounted) return;
     if (lastTimeRef.current === null) {
@@ -229,6 +237,8 @@ export function TechStack() {
       setMasterAngle(((effectiveTime / 1000) * (2 * Math.PI)) / DURATION);
     }
   });
+
+  const currentHandTech = planetData[handIconIndex];
 
   return (
     <section
@@ -273,7 +283,7 @@ export function TechStack() {
               />
             </svg>
 
-            {/* Central Avatar */}
+            {/* Central Avatar & Hand Icon Container */}
             <motion.div
               animate={{ y: [-8 * screenScale, 8 * screenScale] }}
               transition={{
@@ -298,6 +308,40 @@ export function TechStack() {
                   className="object-contain brightness-75 contrast-[1.05] drop-shadow-[0_15px_25px_rgba(0,0,0,0.85)]"
                   priority
                 />
+
+                {/* --- ADJUST HAND FLOATING ICON POSITION & SIZE HERE --- */}
+                {currentHandTech && (
+                  <div
+                    className="absolute z-30 flex items-center justify-center"
+                    style={{
+                      top: "32%", // Adjust vertical alignment over hand
+                      right: "15%", // Adjust horizontal alignment over hand
+                      width: 42 * screenScale,
+                      height: 42 * screenScale,
+                    }}
+                  >
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentHandTech.id}
+                        initial={{ opacity: 0, scale: 0.5, y: 5 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.5, y: -5 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="relative flex h-full w-full items-center justify-center border-cyan-400/30"
+                      >
+                        <Image
+                          src={skillSrc(currentHandTech.id)}
+                          alt={currentHandTech.label}
+                          fill
+                          className="object-contain p-1"
+                          unoptimized
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                )}
+                {/* ----------------------------------------------------- */}
+
               </div>
             </motion.div>
 
